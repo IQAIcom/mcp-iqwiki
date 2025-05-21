@@ -1,7 +1,5 @@
-name: Push checks (Template - Manual Trigger)
-
-# To enable, change to e.g.: on: [push]
-on: workflow_dispatch
+name: Push checks
+on: [push]
 
 jobs:
   Checkout:
@@ -15,11 +13,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.0.0 # Using a version compatible with pnpm
+          node-version: 22.0.0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # Specify pnpm version, e.g., 9
+          version: 9
       - name: Get pnpm store directory
         shell: bash
         run: |

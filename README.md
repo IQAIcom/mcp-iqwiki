@@ -1,212 +1,146 @@
-# MCP Server Starter Template
+# MCP-IQWiki: Model Context Protocol Server for IQ.wiki
 
-A minimal starter template for building Model Context Protocol (MCP) servers using TypeScript and FastMCP.
+This project implements a Model Context Protocol (MCP) server to interact with IQ.wiki data. It allows MCP-compatible clients (like AI assistants, IDE extensions, or custom applications) to access wiki information such as specific wikis by ID, user-created wikis, user-edited wikis, and detailed wiki activities.
 
-## Features
+This server is built using TypeScript and `fastmcp`.
 
-* Basic project structure with `src/lib`, `src/services`, `src/tools`.
-* TypeScript setup (compiles to `dist/`).
-* Biome for linting and formatting.
-* `fastmcp` for MCP server implementation.
-* A weather service example demonstrating:
-  * Proper folder structure (lib, services, tools)
-  * API integration with error handling
-  * Parameter validation using Zod
-  * Separation of concerns
-* GitHub Actions workflows for CI and Release (manual trigger by default).
+## Features (MCP Tools)
 
-## Getting Started
+The server exposes the following tools that MCP clients can utilize:
 
-1. **Create a new repository from this template:**
-   Click [here](https://github.com/new?template_name=mcp-server-starter&template_owner=IQAIcom) to generate a new repository from this template.
+* **`GET_WIKI`**: Get details about a specific wiki from the IQ.wiki platform.
+  * Parameters: `id` (string) - The ID of the wiki to retrieve.
 
-2. **Navigate to your new project:**
+* **`GET_USER_CREATED_WIKIS`**: List wikis created by a specific user on IQ.wiki.
+  * Parameters: `id` (string) - The Ethereum address of the user.
+  * Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
 
-    ```bash
-    cd /path/to/your-new-mcp-server
-    ```
+* **`GET_USER_EDITED_WIKIS`**: List wikis edited by a specific user on IQ.wiki.
+  * Parameters: `id` (string) - The Ethereum address of the user.
+  * Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
 
-3. **Initialize Git Repository (if not already):**
+* **`GET_USER_WIKI_ACTIVITIES`**: Get detailed wiki activities (creations or edits) for a user on IQ.wiki.
+  * Parameters: `id` (string) - The Ethereum address of the user.
+  * Parameters: `activityType` (enum: "CREATED" | "UPDATED", optional) - Type of activity to filter by.
+  * Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
 
-    ```bash
-    git init
-    git branch -M main # Or your preferred default branch name
-    ```
+## Prerequisites
 
-4. **Customize `package.json`:**
-    * Update `name`, `version`, `description`, `author`, `repository`, etc.
-    * Update the `bin` entry if you change the command name.
+* Node.js (v16 or newer recommended)
+* pnpm (See <https://pnpm.io/installation>)
 
-5. **Install dependencies:**
+## Installation
 
-    ```bash
-    pnpm install
-    ```
+There are a few ways to use `mcp-iqwiki`:
 
-6. **Configure environment variables:**
-   For the weather service example, you'll need an OpenWeather API key:
+**1. Using `pnpm dlx` (Recommended for most MCP client setups):**
+
+   You can run the server directly using `pnpm dlx` without needing a global installation. This is often the easiest way to integrate with MCP clients.
 
    ```bash
-   # Create a .env file (add to .gitignore)
-   echo "OPENWEATHER_API_KEY=your_api_key_here" > .env
+   pnpm dlx @iqai/mcp-iqwiki
    ```
 
-   Get an API key from [OpenWeather](https://openweathermap.org/api).
+**2. Global Installation from npm (via pnpm):**
 
-7. **Initial Commit:**
-    It's a good idea to make an initial commit at this stage before setting up Husky and Changesets.
+   Install the package globally to make the `mcp-iqwiki` command available system-wide:
 
-    ```bash
-    git add .
-    git commit -m "feat: initial project setup from template"
-    ```
+   ```bash
+   pnpm add -g @iqai/mcp-iqwiki
+   ```
 
-8. **Develop your server:**
-    * Add your custom tools in the `src/tools/` directory.
-    * Implement logic in `src/lib/` and `src/services/`.
-    * Register tools in `src/index.ts`.
+**3. Building from Source (for development or custom modifications):**
 
-## Example Weather Tool
+   1. **Clone the repository:**
 
-This template includes a weather service example that demonstrates:
+      ```bash
+      git clone https://github.com/IQAIcom/mcp-iqwiki.git
+      cd mcp-iqwiki
+      ```
 
-1. **HTTP Utilities** (`src/lib/http.ts`):
-   * Type-safe HTTP requests with Zod validation
-   * Error handling
+   2. **Install dependencies:**
 
-2. **Configuration** (`src/lib/config.ts`):
-   * Environment variable management
-   * Service configuration
+      ```bash
+      pnpm install
+      ```
 
-3. **Weather Service** (`src/services/weatherService.ts`):
-   * API integration
-   * Data transformation
-   * Proper error propagation
+   3. **Build the server:**
+      This compiles the TypeScript code to JavaScript in the `dist` directory.
 
-4. **Weather Tool** (`src/tools/weather.ts`):
-   * Parameter validation with Zod
-   * User-friendly output formatting
-   * Error handling and user guidance
+      ```bash
+      pnpm run build
+      ```
 
-To use the weather tool:
+## Running the Server with an MCP Client
 
-```bash
-# Set your OpenWeather API key
-export OPENWEATHER_API_KEY=your_api_key_here
+MCP clients (like AI assistants, IDE extensions, etc.) will run this server as a background process. You need to configure the client to tell it how to start your server.
 
-# Run the server
-pnpm run start
+Below is an example configuration snippet that an MCP client might use (e.g., in a `mcp_servers.json` or similar configuration file):
 
-# Connect with an MCP client and use the GET_WEATHER tool
-# with parameter: { "city": "London" }
+```json
+{
+  "mcpServers": {
+    "iq-wiki-mcp-server": {
+      "command": "pnpm",
+      "args": [
+        "dlx",
+        "@iqai/mcp-iqwiki"
+      ]
+    }
+  }
+}
 ```
 
-## Pre-commit Linting (Husky & lint-staged)
+**Alternative if Globally Installed:**
 
-This template includes `husky` and `lint-staged` in its `devDependencies` for running Biome on staged files before committing. To set it up:
+If you have installed `mcp-iqwiki` globally, you can simplify the command:
 
-1. **Ensure your package.json has the prepare script for husky:**
+```json
+{
+  "mcpServers": {
+    "iq-wiki-mcp-server": {
+      "command": "mcp-iqwiki",
+      "args": []
+    }
+  }
+}
+```
 
-   ```json
-   {
-     "scripts": {
-       "prepare": "husky"
-     }
-   }
-   ```
+## Tool Examples
 
-2. **Install dependencies and initialize husky:**
+Below are examples of how to use each tool in this MCP server:
 
-   ```bash
-   pnpm install
-   pnpm dlx husky init
-   ```
+### GET_WIKI
 
-   This creates a `.husky` directory with the necessary setup.
+```json
+{
+  "id": "bitcoin"
+}
+```
 
-3. **Create the pre-commit hook for lint-staged:**
+### GET_USER_CREATED_WIKIS
 
-   ```bash
-   # Create or edit the pre-commit file
-   echo '#!/usr/bin/env sh' > .husky/pre-commit
-   echo '. "$(dirname -- "$0")/_/husky.sh"
-   
-   pnpm lint-staged' >> .husky/pre-commit
-   
-   # Make it executable
-   chmod +x .husky/pre-commit
+```json
+{
+  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889",
+  "timeFrameSeconds": 3600
+}
+```
 
-   ```
+### GET_USER_EDITED_WIKIS
 
-4. **Configure `lint-staged` in `package.json`:**
-   ```json
-   // In package.json
-   "lint-staged": {
-     "*.{js,ts,cjs,mjs,jsx,tsx,json,jsonc}": [
-       "biome check --write --organize-imports-enabled=false --no-errors-on-unmatched"
-     ]
-   }
-   ```
+```json
+{
+  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889"
+}
+```
 
-   *Adjust the Biome command as needed. The one above is a common example.*
+### GET_USER_WIKI_ACTIVITIES
 
-5. **Test it:**
-   Stage some changes to a `.ts` file and try to commit. Biome should run on the staged file.
-
-## Release Management (Changesets)
-
-This template is ready for release management using [Changesets](https://github.com/changesets/changesets).
-
-1. **Install Changesets CLI (if not already in devDependencies):**
-    The template `package.json` should include `@changesets/cli`. If not:
-
-    ```bash
-    pnpm add -D @changesets/cli
-    ```
-
-2. **Initialize Changesets:**
-    This command will create a `.changeset` directory with some configuration files.
-
-    ```bash
-    pnpm changeset init
-    # or npx changeset init
-    ```
-
-    Commit the generated `.changeset` directory and its contents.
-
-3. **Adding Changesets During Development:**
-    When you make a change that should result in a version bump (fix, feature, breaking change):
-
-    ```bash
-    pnpm changeset add
-    # or npx changeset add
-    ```
-
-    Follow the prompts. This will create a markdown file in the `.changeset` directory describing the change.
-    Commit this changeset file along with your code changes.
-
-4. **Publishing a Release:**
-    The GitHub Actions workflow `release.yml` (in `mcp-server-starter/.github/workflows/`) is set up for this. When you are ready to release:
-    * Ensure all feature PRs with their changeset files are merged to `main`.
-    * **Important:** Before publishing, ensure your `package.json` is complete. Add or update fields like `keywords`, `author`, `repository` (e.g., `"repository": {"type": "git", "url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git"}`), `bugs` (e.g., `"bugs": {"url": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/issues"}`), and `homepage` (e.g., `"homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO_NAME#readme"`) for better discoverability and information on npm.
-    * The `release.yml` workflow (manually triggered by default in the template) will:
-        1. Run `changeset version` to consume changeset files, update `package.json` versions, and update `CHANGELOG.md`. It will push these to a `changeset-release/main` branch and open a "Version Packages" PR.
-        2. **Merge the "Version Packages" PR.**
-        3. Upon merging, the workflow runs again on `main`. This time, it will run `pnpm run publish-packages` (which should include `changeset publish`) to publish to npm and create GitHub Releases/tags.
-    * **To enable automatic release flow:** Change `on: workflow_dispatch` in `release.yml` to `on: push: branches: [main]` (or your release branch).
-
-## Available Scripts
-
-* `pnpm run build`: Compiles TypeScript to JavaScript in `dist/` and makes the output executable.
-* `pnpm run dev`: Runs the server in development mode using `tsx` (hot-reloading for TypeScript).
-* `pnpm run start`: Runs the built server (from `dist/`) using Node.
-* `pnpm run lint`: Lints the codebase using Biome.
-* `pnpm run format`: Formats the codebase using Biome.
-
-## Using the Server
-
-After building (`pnpm run build`), you can run the server:
-
-* Directly if linked or globally installed: `mcp-hello-server` (or your customized bin name).
-* Via node: `node dist/index.js`
-* Via `pnpm dlx` (once published): `pnpm dlx your-published-package-name`
+```json
+{
+  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889",
+  "activityType": "CREATED",
+  "timeFrameSeconds": 86400
+}
+```

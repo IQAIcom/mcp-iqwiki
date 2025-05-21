@@ -1,6 +1,2 @@
-// src/constants.ts
-
-export const APP_NAME = "MyNewMCPServer";
-export const DEFAULT_PORT = 3000;
-
-// Add more constants as your server develops
+export const IQ_BASE_URL = "https://iq.wiki/wiki";
+export const IQ_REVISION_URL = "https://iq.wiki/revision";
