@@ -2,8 +2,6 @@
 
 This project implements a Model Context Protocol (MCP) server to interact with IQ.wiki data. It allows MCP-compatible clients (like AI assistants, IDE extensions, or custom applications) to access wiki information such as specific wikis by ID, user-created wikis, user-edited wikis, and detailed wiki activities.
 
-This server is built using TypeScript and `fastmcp`.
-
 ## Features (MCP Tools)
 
 The server exposes the following tools that MCP clients can utilize:
