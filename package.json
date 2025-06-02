@@ -1,6 +1,6 @@
 {
 	"name": "@iqai/mcp-iqwiki",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "IQ Wiki MCP server for accessing IQ.wiki data",
 	"main": "dist/index.js",
 	"type": "module",
