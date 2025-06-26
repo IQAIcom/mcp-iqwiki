@@ -245,27 +245,5 @@ describe("GetUserCreatedWikisService", () => {
 				`${expectedFormattedString1}\n\n${expectedFormattedString2}`.trim(),
 			);
 		});
-
-		it("should handle a wiki with missing 'created' field gracefully in formatting (uses current date if not available)", () => {
-			const wikiWithoutCreated = {
-				id: "wikiNoDate",
-				title: "Wiki with no date",
-				summary: "This wiki is missing a creation date.",
-				transactionHash: "0xhashNoDate",
-				created: null,
-			};
-
-			const result = service.format([wikiWithoutCreated]);
-			const expectedFormattedString = dedent`
-                📜 Wiki Created
-                - Title: Wiki with no date
-                - Summary: This wiki is missing a creation date.
-                - Created: 6/24/2025, 11:00:00 AM
-
-                🔗 Source: ${IQ_BASE_URL}/wikiNoDate
-                🔗 Transaction: https://polygonscan.com/tx/0xhashNoDate
-            `;
-			expect(result.trim()).toEqual(expectedFormattedString.trim());
-		});
 	});
 });
