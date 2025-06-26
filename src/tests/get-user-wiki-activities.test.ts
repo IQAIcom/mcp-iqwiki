@@ -1,7 +1,7 @@
+import dedent from "dedent";
+import { IQ_BASE_URL, IQ_REVISION_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
 import { USER_ACTIVITIES_QUERY, WIKI_QUERY } from "../lib/queries.js";
-import { IQ_BASE_URL, IQ_REVISION_URL } from "../constants.js";
-import dedent from "dedent";
 import { GetUserWikiActivitiesService } from "../services/get-user-wiki-activities.js";
 
 jest.mock("../lib/graphql.js", () => ({
