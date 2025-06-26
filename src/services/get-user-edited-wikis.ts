@@ -6,7 +6,6 @@ import { USER_EDITED_WIKIS_QUERY } from "../lib/queries.js";
 export class GetUserEditedWikisService {
 	async execute(id: string, timeFrameSeconds?: number) {
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: the type UserWikiResponse is not exposing updated
 			const response: any = await client.request(USER_EDITED_WIKIS_QUERY, {
 				id,
 			});
@@ -22,14 +21,12 @@ export class GetUserEditedWikisService {
 
 			// Since the updated field is null for edited wikis, we need to detect edits by metadata
 			// Filter out wikis that aren't actually edits (they should have previous_cid in metadata)
-			// biome-ignore lint/suspicious/noExplicitAny: the type wiki is not exposing metadata
 			wikis = wikis.filter((wiki: any) => {
 				// Check for edit-specific metadata
 				const hasMetadata = wiki.metadata && Array.isArray(wiki.metadata);
 				if (!hasMetadata) return false;
 
 				// Look for previous_cid which indicates this is an edit
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				return wiki.metadata.some((meta: any) => meta.id === "previous_cid");
 			});
 
@@ -55,37 +52,30 @@ export class GetUserEditedWikisService {
 			}
 
 			return wikis;
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (error: any) {
 			throw new Error(error.message);
 		}
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	format(wikis: any) {
-		return (
-			wikis
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				.map((wiki: any) => {
-					// Find edit-related metadata
-					const wordsChanged =
-						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						wiki.metadata.find((m: any) => m.id === "words-changed")?.value ||
-						"Unknown";
-					const percentChanged =
-						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						wiki.metadata.find((m: any) => m.id === "percent-changed")?.value ||
-						"Unknown";
-					const blocksChanged =
-						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						wiki.metadata.find((m: any) => m.id === "blocks-changed")?.value ||
-						"Unknown";
+		return wikis
+			.map((wiki: any) => {
+				// Find edit-related metadata
+				const wordsChanged =
+					wiki.metadata.find((m: any) => m.id === "words-changed")?.value ||
+					"Unknown";
+				const percentChanged =
+					wiki.metadata.find((m: any) => m.id === "percent-changed")?.value ||
+					"Unknown";
+				const blocksChanged =
+					wiki.metadata.find((m: any) => m.id === "blocks-changed")?.value ||
+					"Unknown";
 
-					// Get the date from updated or fallback to a reasonable alternative
-					const date = new Date(wiki.updated || wiki.created);
-					const formattedDate = date.toLocaleString();
+				// Get the date from updated or fallback to a reasonable alternative
+				const date = new Date(wiki.updated || wiki.created);
+				const formattedDate = date.toLocaleString();
 
-					return dedent`
+				return dedent`
 						📜 Wiki Edited
 						- Title: ${wiki.title}
 						- Summary: ${wiki.summary}
@@ -96,8 +86,7 @@ export class GetUserEditedWikisService {
 						🔗 Source: ${IQ_REVISION_URL}/${wiki.ipfs}
 						🔗 Transaction: https://polygonscan.com/tx/${wiki.transactionHash}
 					`;
-				})
-				.join("\n\n")
-		);
+			})
+			.join("\n\n");
 	}
 }

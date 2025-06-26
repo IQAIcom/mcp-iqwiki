@@ -6,7 +6,6 @@ import { USER_CREATED_WIKIS_QUERY } from "../lib/queries.js";
 export class GetUserCreatedWikisService {
 	async execute(id: string, timeFrameSeconds?: number) {
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: the type UserWikiResponse is not exposing created
 			const response: any = await client.request(USER_CREATED_WIKIS_QUERY, {
 				id,
 			});
@@ -26,7 +25,6 @@ export class GetUserCreatedWikisService {
 				const timeLimit = new Date(now.getTime() - timeFrameSeconds * 1000);
 
 				// Filter wikis by creation time
-				// biome-ignore lint/suspicious/noExplicitAny: the type wiki is not exposing created
 				wikis = wikis.filter((wiki: any) => {
 					if (!wiki.created) return false;
 					const wikiDate = new Date(wiki.created);
@@ -49,22 +47,18 @@ export class GetUserCreatedWikisService {
 			}
 
 			return wikis;
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (error: any) {
 			throw new Error(error.message);
 		}
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	format(wikis: any) {
-		return (
-			wikis
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				.map((wiki: any) => {
-					const date = new Date(wiki.created);
-					const formattedDate = date.toLocaleString();
+		return wikis
+			.map((wiki: any) => {
+				const date = new Date(wiki.created);
+				const formattedDate = date.toLocaleString();
 
-					return dedent`
+				return dedent`
 						📜 Wiki Created
 						- Title: ${wiki.title}
 						- Summary: ${wiki.summary}
@@ -73,8 +67,7 @@ export class GetUserCreatedWikisService {
 						🔗 Source: ${IQ_BASE_URL}/${wiki.id}
 						🔗 Transaction: https://polygonscan.com/tx/${wiki.transactionHash}
 					`;
-				})
-				.join("\n\n")
-		);
+			})
+			.join("\n\n");
 	}
 }

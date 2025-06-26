@@ -14,13 +14,10 @@ export class GetWikiService {
 				throw new Error("Wiki Not found");
 			}
 			return response.wiki;
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (error: any) {
 			throw new Error(error.message);
 		}
 	}
-
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	format(wiki: any) {
 		const formattedWiki = dedent`
 			📜 Wiki Details
