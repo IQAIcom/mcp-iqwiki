@@ -15,6 +15,7 @@
 		"start": "node dist/index.js",
 		"publish-packages": "pnpm run build && changeset publish",
 		"format": "biome format . --write",
+		"test": "jest --passWithNoTests",
 		"lint": "biome check ."
 	},
 	"author": "IQAI",
@@ -34,20 +35,26 @@
 	"dependencies": {
 		"dedent": "^1.6.0",
 		"fastmcp": "^1.27.7",
-		"graphql-request": "^6.1.0",
-		"graphql": "^16.8.1",
 		"gql.tada": "^1.4.3",
+		"graphql": "^16.8.1",
+		"graphql-request": "^6.1.0",
+		"ts-node": "^10.9.2",
 		"zod": "^3.25.7"
 	},
 	"devDependencies": {
+		"@0no-co/graphqlsp": "^1.8.0",
+		"@babel/preset-env": "^7.27.2",
+		"@babel/preset-typescript": "^7.27.1",
 		"@biomejs/biome": "*",
 		"@changesets/cli": "^2.29.4",
-		"@types/node": "^22.15.19",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.0.3",
 		"husky": "^9.0.0",
+		"jest": "^30.0.2",
 		"lint-staged": "^15.0.0",
 		"shx": "^0.3.4",
-		"typescript": "^5.8.3",
-		"@0no-co/graphqlsp": "^1.8.0"
+		"ts-jest": "^29.4.0",
+		"typescript": "^5.8.3"
 	},
 	"lint-staged": {
 		"*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
