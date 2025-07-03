@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { IQ_BASE_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
 import { WIKI_QUERY } from "../lib/queries.js";

@@ -1,12 +1,12 @@
 import dedent from "dedent";
 import {
-	describe,
-	it,
-	expect,
-	vi,
-	beforeEach,
 	afterAll,
 	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
 } from "vitest";
 import { IQ_BASE_URL, IQ_REVISION_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
