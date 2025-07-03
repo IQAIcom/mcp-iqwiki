@@ -1,5 +1,11 @@
 # @iqai/mcp-iqwiki
 
+## 0.0.4
+
+### Patch Changes
+
+- 9036d88: Adds wiki search tool ot get answers and search with natural language
+
 ## 0.0.3
 
 ### Patch Changes
