@@ -1,12 +1,21 @@
 import dedent from "dedent";
+import {
+	describe,
+	it,
+	expect,
+	vi,
+	beforeEach,
+	beforeAll,
+	afterAll,
+} from "vitest";
 import { IQ_REVISION_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
 import { USER_EDITED_WIKIS_QUERY } from "../lib/queries.js";
 import { GetUserEditedWikisService } from "../services/get-user-edited-wikis.js";
 
-jest.mock("../lib/graphql.js", () => ({
+vi.mock("../lib/graphql.js", () => ({
 	client: {
-		request: jest.fn(),
+		request: vi.fn(),
 	},
 }));
 
@@ -34,7 +43,7 @@ describe("GetUserEditedWikisService", () => {
 
 	beforeEach(() => {
 		service = new GetUserEditedWikisService();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	const mockEditedWikis = [
@@ -96,7 +105,7 @@ describe("GetUserEditedWikisService", () => {
 
 	describe("execute", () => {
 		it("should return edited wikis when user has them", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: [{ content: mockEditedWikis }],
@@ -119,7 +128,7 @@ describe("GetUserEditedWikisService", () => {
 		});
 
 		it("should throw 'user does not exist' if userById is null", async () => {
-			(client.request as jest.Mock).mockResolvedValue({ userById: null });
+			vi.mocked(client.request).mockResolvedValue({ userById: null });
 
 			await expect(service.execute("nonexistentUser")).rejects.toThrow(
 				"user does not exist",
@@ -127,7 +136,7 @@ describe("GetUserEditedWikisService", () => {
 		});
 
 		it("should throw 'user has not edited any wikis' if wikisEdited.activity is null", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: null,
@@ -141,7 +150,7 @@ describe("GetUserEditedWikisService", () => {
 		});
 
 		it("should throw errorif wikisEdited.activity is an empty array", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: [],
@@ -155,7 +164,7 @@ describe("GetUserEditedWikisService", () => {
 		});
 
 		it("should throw 'user has not edited any wikis' if wikisEdited.activity[0].content is empty or contains no valid edits", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: [{ content: [mockEditedWikis[3]] }],
@@ -170,13 +179,13 @@ describe("GetUserEditedWikisService", () => {
 
 		it("should throw error message from GraphQL client if request fails", async () => {
 			const errorMessage = "GraphQL Error: Internal Server Error";
-			(client.request as jest.Mock).mockRejectedValue(new Error(errorMessage));
+			vi.mocked(client.request).mockRejectedValue(new Error(errorMessage));
 
 			await expect(service.execute("someUser")).rejects.toThrow(errorMessage);
 		});
 
 		it("should not filter by timeFrameSeconds but provide an error about it if no wikis are found after metadata filter", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: [
@@ -203,7 +212,7 @@ describe("GetUserEditedWikisService", () => {
 		});
 
 		it("should return wikis without applying time filtering (as per current implementation's logic)", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisEdited: {
 						activity: [{ content: mockEditedWikis }],

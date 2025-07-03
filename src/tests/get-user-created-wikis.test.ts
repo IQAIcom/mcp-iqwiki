@@ -1,12 +1,21 @@
 import dedent from "dedent";
+import {
+	describe,
+	it,
+	expect,
+	vi,
+	beforeEach,
+	beforeAll,
+	afterAll,
+} from "vitest";
 import { IQ_BASE_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
 import { USER_CREATED_WIKIS_QUERY } from "../lib/queries.js";
 import { GetUserCreatedWikisService } from "../services/get-user-created-wikis.js";
 
-jest.mock("../lib/graphql.js", () => ({
+vi.mock("../lib/graphql.js", () => ({
 	client: {
-		request: jest.fn(),
+		request: vi.fn(),
 	},
 }));
 
@@ -34,7 +43,7 @@ describe("GetUserCreatedWikisService", () => {
 
 	beforeEach(() => {
 		service = new GetUserCreatedWikisService();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	const mockCreatedWikis = [
@@ -70,7 +79,7 @@ describe("GetUserCreatedWikisService", () => {
 
 	describe("execute", () => {
 		it("should return all created wikis when no timeFrame is specified", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [{ content: mockCreatedWikis }],
@@ -88,7 +97,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should filter wikis by timeFrame (e.g., 30 seconds)", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [{ content: mockCreatedWikis }],
@@ -106,7 +115,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should filter wikis by timeFrame (e.g., 60 seconds)", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [{ content: mockCreatedWikis }],
@@ -128,7 +137,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should throw 'user does not exist' if userById is null", async () => {
-			(client.request as jest.Mock).mockResolvedValue({ userById: null });
+			vi.mocked(client.request).mockResolvedValue({ userById: null });
 
 			await expect(service.execute("nonexistentUser")).rejects.toThrow(
 				"user does not exist",
@@ -136,7 +145,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should throw 'user has not created any wikis' if wikisCreated.activity is null", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: null,
@@ -150,7 +159,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should throw 'user has not created any wikis' if wikisCreated.activity is an empty array", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [],
@@ -164,7 +173,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should throw 'user has not created any wikis' if wikisCreated.activity[0].content is empty", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [{ content: [] }],
@@ -176,7 +185,7 @@ describe("GetUserCreatedWikisService", () => {
 		});
 
 		it("should throw 'No created wikis found in the last X' error if no wikis in timeframe", async () => {
-			(client.request as jest.Mock).mockResolvedValue({
+			vi.mocked(client.request).mockResolvedValue({
 				userById: {
 					wikisCreated: {
 						activity: [{ content: [mockCreatedWikis[3]] }],
@@ -191,7 +200,7 @@ describe("GetUserCreatedWikisService", () => {
 
 		it("should re-throw the error message from the GraphQL client if request fails", async () => {
 			const errorMessage = "Network connectivity issue";
-			(client.request as jest.Mock).mockRejectedValue(new Error(errorMessage));
+			vi.mocked(client.request).mockRejectedValue(new Error(errorMessage));
 
 			await expect(service.execute("userError")).rejects.toThrow(errorMessage);
 		});

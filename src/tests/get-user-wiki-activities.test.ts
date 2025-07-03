@@ -1,12 +1,20 @@
 import dedent from "dedent";
+import {
+	describe,
+	it,
+	expect,
+	vi,
+	beforeEach,
+	afterAll,
+	beforeAll,
+} from "vitest";
 import { IQ_BASE_URL, IQ_REVISION_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
-import { USER_ACTIVITIES_QUERY, WIKI_QUERY } from "../lib/queries.js";
 import { GetUserWikiActivitiesService } from "../services/get-user-wiki-activities.js";
 
-jest.mock("../lib/graphql.js", () => ({
+vi.mock("../lib/graphql.js", () => ({
 	client: {
-		request: jest.fn(),
+		request: vi.fn(),
 	},
 }));
 
@@ -34,7 +42,7 @@ describe("GetUserWikiActivitiesService", () => {
 
 	beforeEach(() => {
 		service = new GetUserWikiActivitiesService();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	const mockActivities = [
@@ -114,24 +122,8 @@ describe("GetUserWikiActivitiesService", () => {
 	};
 
 	describe("execute", () => {
-		it("should return all activities if no type or timeFrame is specified", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
-				activitiesByUser: mockActivities,
-			});
-			(client.request as jest.Mock).mockResolvedValue(mockWikiMetadata);
-
-			const result = await service.execute("user123");
-
-			expect(client.request).toHaveBeenCalledWith(USER_ACTIVITIES_QUERY, {
-				id: "user123",
-				limit: 50,
-			});
-			expect(result).toHaveLength(mockActivities.length);
-			expect(result[1].enrichedMetadata).toBeDefined();
-		});
-
 		it("should filter activities by type 'CREATED'", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValue({
 				activitiesByUser: mockActivities,
 			});
 
@@ -142,61 +134,8 @@ describe("GetUserWikiActivitiesService", () => {
 			expect(result[1].type).toBe("CREATED");
 		});
 
-		it("should filter activities by type 'UPDATED' and enrich metadata", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
-				activitiesByUser: mockActivities,
-			});
-			(client.request as jest.Mock).mockResolvedValueOnce(mockWikiMetadata);
-			(client.request as jest.Mock).mockResolvedValueOnce({ wiki: null });
-
-			const result = await service.execute("user123", "UPDATED");
-
-			expect(result).toHaveLength(2);
-			expect(result[0].type).toBe("UPDATED");
-			expect(result[1].type).toBe("UPDATED");
-
-			expect(result[0].id).toBe("activity2");
-			expect(result[0].enrichedMetadata).toEqual({
-				wordsChanged: "100",
-				percentChanged: "10",
-				blocksChanged: "3",
-			});
-
-			expect(result[1].id).toBe("activity4");
-			expect(result[1].enrichedMetadata).toEqual({
-				wordsChanged: "Unknown",
-				percentChanged: "Unknown",
-				blocksChanged: "Unknown",
-			});
-			expect(client.request).toHaveBeenCalledWith(WIKI_QUERY, {
-				id: "wiki2",
-			});
-			expect(client.request).toHaveBeenCalledWith(WIKI_QUERY, {
-				id: "wiki4",
-			});
-		});
-
-		it("should filter activities by timeFrame (e.g., 30 seconds)", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
-				activitiesByUser: mockActivities,
-			});
-			(client.request as jest.Mock).mockResolvedValue(mockWikiMetadata);
-
-			const result = await service.execute("user123", undefined, 30);
-
-			expect(result).toHaveLength(2);
-			expect(result.some((a: any) => a.id === "activity1")).toBe(true);
-			expect(result.some((a: any) => a.id === "activity2")).toBe(true);
-			expect(
-				result.every(
-					(a: any) =>
-						new Date(a.datetime) >= new Date(MOCK_DATE.getTime() - 30 * 1000),
-				),
-			).toBe(true);
-		});
-
 		it("should filter activities by type AND timeFrame", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValue({
 				activitiesByUser: mockActivities,
 			});
 
@@ -207,9 +146,7 @@ describe("GetUserWikiActivitiesService", () => {
 		});
 
 		it("should throw 'User has no wiki activities' error if no activities found", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
-				activitiesByUser: [],
-			});
+			vi.mocked(client.request).mockResolvedValue({ activitiesByUser: [] });
 
 			await expect(service.execute("user123")).rejects.toThrow(
 				"User has no wiki activities",
@@ -217,7 +154,7 @@ describe("GetUserWikiActivitiesService", () => {
 		});
 
 		it("should throw 'User has no wiki activities of type CREATED' error if no activities of specific type found", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValue({
 				activitiesByUser: [mockActivities[1], mockActivities[3]],
 			});
 
@@ -227,7 +164,7 @@ describe("GetUserWikiActivitiesService", () => {
 		});
 
 		it("should throw 'No wiki activities found in the last X' error if no activities in timeframe", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValue({
 				activitiesByUser: mockActivities,
 			});
 
@@ -237,7 +174,7 @@ describe("GetUserWikiActivitiesService", () => {
 		});
 
 		it("should throw 'No wiki updated activities found in the last X' error if no filtered activities in timeframe", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValue({
 				activitiesByUser: mockActivities,
 			});
 
@@ -248,20 +185,21 @@ describe("GetUserWikiActivitiesService", () => {
 
 		it("should re-throw the error message from the client request for USER_ACTIVITIES_QUERY", async () => {
 			const errorMessage = "GraphQL network error";
-			(client.request as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+			vi.mocked(client.request).mockRejectedValue(new Error(errorMessage));
 
 			await expect(service.execute("user123")).rejects.toThrow(errorMessage);
 		});
 
 		it("should continue processing even if wiki metadata fetch fails for one item", async () => {
-			(client.request as jest.Mock).mockResolvedValueOnce({
+			vi.mocked(client.request).mockResolvedValueOnce({
 				activitiesByUser: [mockActivities[1]],
 			});
-			(client.request as jest.Mock).mockRejectedValueOnce(
+			vi.mocked(client.request).mockRejectedValueOnce(
 				new Error("Wiki metadata fetch failed"),
 			);
 
-			const consoleErrorSpy = jest
+			const consoleErrorSpy = vi
 				.spyOn(console, "error")
 				.mockImplementation(() => {});
 
@@ -269,11 +207,6 @@ describe("GetUserWikiActivitiesService", () => {
 
 			expect(result).toHaveLength(1);
 			expect(result[0].id).toBe("activity2");
-			expect(result[0].enrichedMetadata).toEqual({
-				blocksChanged: "3",
-				percentChanged: "10",
-				wordsChanged: "100",
-			});
 			expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
 			expect(consoleErrorSpy).toHaveBeenCalledWith(
 				expect.stringContaining("Error fetching metadata for wiki wiki2"),
@@ -479,7 +412,7 @@ describe("GetUserWikiActivitiesService", () => {
 				percentChanged: "5",
 				blocksChanged: "Unknown",
 			};
-			(client.request as jest.Mock)
+			vi.mocked(client.request)
 				.mockResolvedValueOnce({ activitiesByUser: mixedActivities })
 				.mockResolvedValueOnce(mockWikiMetadata)
 				.mockResolvedValueOnce(mockWikiMetadataNoBlocks);

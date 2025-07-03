@@ -13,7 +13,7 @@
 		"sourceMap": true,
 		"declaration": true,
 		"noImplicitAny": false,
-		"types": ["node", "jest"],
+		"types": ["node"],
 		"plugins": [
 			{
 				"name": "@0no-co/graphqlsp",

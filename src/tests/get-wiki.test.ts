@@ -1,11 +1,12 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { IQ_BASE_URL } from "../constants.js";
 import { client } from "../lib/graphql.js";
 import { WIKI_QUERY } from "../lib/queries.js";
 import { GetWikiService } from "../services/get-wiki.js";
 
-jest.mock("../lib/graphql", () => ({
+vi.mock("../lib/graphql", () => ({
 	client: {
-		request: jest.fn(),
+		request: vi.fn(),
 	},
 }));
 
@@ -14,7 +15,7 @@ describe("GetWikiService", () => {
 
 	beforeEach(() => {
 		service = new GetWikiService();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe("execute", () => {
@@ -25,7 +26,7 @@ describe("GetWikiService", () => {
 				summary: "This is a test summary.",
 				transactionHash: "0xabc",
 			};
-			(client.request as jest.Mock).mockResolvedValue({ wiki: mockWiki });
+			vi.mocked(client.request).mockResolvedValue({ wiki: mockWiki });
 
 			const result = await service.execute("123");
 
@@ -37,7 +38,7 @@ describe("GetWikiService", () => {
 		});
 
 		it("should throw an error if wiki is not found", async () => {
-			(client.request as jest.Mock).mockResolvedValue({ wiki: null });
+			vi.mocked(client.request).mockResolvedValue({ wiki: null });
 
 			await expect(service.execute("456")).rejects.toThrow("Wiki Not found");
 			expect(client.request).toHaveBeenCalledTimes(1);
@@ -48,7 +49,7 @@ describe("GetWikiService", () => {
 
 		it("should re-throw the error message from the client request", async () => {
 			const errorMessage = "Network error";
-			(client.request as jest.Mock).mockRejectedValue(new Error(errorMessage));
+			vi.mocked(client.request).mockRejectedValue(new Error(errorMessage));
 
 			await expect(service.execute("789")).rejects.toThrow(errorMessage);
 			expect(client.request).toHaveBeenCalledTimes(1);
