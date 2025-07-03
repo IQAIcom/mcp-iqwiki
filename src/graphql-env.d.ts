@@ -614,6 +614,14 @@ export type introspection_types = {
 					ofType: { kind: "SCALAR"; name: "String"; ofType: null };
 				};
 			};
+			block: {
+				name: "block";
+				type: {
+					kind: "NON_NULL";
+					name: never;
+					ofType: { kind: "SCALAR"; name: "Int"; ofType: null };
+				};
+			};
 			created: {
 				name: "created";
 				type: {
@@ -864,7 +872,6 @@ export type introspection_types = {
 	MarketRankData: {
 		kind: "UNION";
 		name: "MarketRankData";
-		// biome-ignore lint/complexity/noBannedTypes: <explanation>
 		fields: {};
 		possibleTypes: "NftRankListData" | "TokenRankListData";
 	};
@@ -1478,7 +1485,8 @@ export type introspection_types = {
 			| "CREATED"
 			| "UPDATED"
 			| "DAY"
-			| "DATE";
+			| "DATE"
+			| "TOKENS";
 	};
 	Project: {
 		kind: "OBJECT";
@@ -1942,6 +1950,14 @@ export type introspection_types = {
 					};
 				};
 			};
+			search: {
+				name: "search";
+				type: {
+					kind: "NON_NULL";
+					name: never;
+					ofType: { kind: "OBJECT"; name: "SearchResult"; ofType: null };
+				};
+			};
 			searchExplorers: {
 				name: "searchExplorers";
 				type: {
@@ -2339,6 +2355,28 @@ export type introspection_types = {
 			};
 		};
 	};
+	SearchResult: {
+		kind: "OBJECT";
+		name: "SearchResult";
+		fields: {
+			answer: {
+				name: "answer";
+				type: { kind: "SCALAR"; name: "String"; ofType: null };
+			};
+			suggestions: {
+				name: "suggestions";
+				type: {
+					kind: "LIST";
+					name: never;
+					ofType: {
+						kind: "NON_NULL";
+						name: never;
+						ofType: { kind: "OBJECT"; name: "WikiSuggestion"; ofType: null };
+					};
+				};
+			};
+		};
+	};
 	SignaturePayloadInput: {
 		kind: "INPUT_OBJECT";
 		name: "SignaturePayloadInput";
@@ -2417,7 +2455,6 @@ export type introspection_types = {
 	SlugResult: {
 		kind: "UNION";
 		name: "SlugResult";
-		// biome-ignore lint/complexity/noBannedTypes: <explanation>
 		fields: {};
 		possibleTypes: "Slug" | "Valid";
 	};
@@ -3193,7 +3230,6 @@ export type introspection_types = {
 	UserWikis: {
 		kind: "UNION";
 		name: "UserWikis";
-		// biome-ignore lint/complexity/noBannedTypes: <explanation>
 		fields: {};
 		possibleTypes: "UserActivity" | "WikiCount";
 	};
@@ -3501,6 +3537,28 @@ export type introspection_types = {
 					kind: "NON_NULL";
 					name: never;
 					ofType: { kind: "SCALAR"; name: "DateTime"; ofType: null };
+				};
+			};
+		};
+	};
+	WikiSuggestion: {
+		kind: "OBJECT";
+		name: "WikiSuggestion";
+		fields: {
+			id: {
+				name: "id";
+				type: {
+					kind: "NON_NULL";
+					name: never;
+					ofType: { kind: "SCALAR"; name: "ID"; ofType: null };
+				};
+			};
+			title: {
+				name: "title";
+				type: {
+					kind: "NON_NULL";
+					name: never;
+					ofType: { kind: "SCALAR"; name: "String"; ofType: null };
 				};
 			};
 		};

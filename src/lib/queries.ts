@@ -148,3 +148,15 @@ export const WIKI_QUERY = graphql(`
     }
   }
 `);
+
+export const SEARCH_WIKIS_QUERY = graphql(`
+  query searchWikis($query: String!) {
+    search(query: $query) {
+      answer
+      suggestions {
+        id
+        title
+      }
+    }
+  }
+`);
