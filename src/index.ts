@@ -4,6 +4,7 @@ import { getUserCreatedWikisTool } from "./tools/get-user-created-wikis.js";
 import { getUserEditedWikisTool } from "./tools/get-user-edited-wikis.js";
 import { getWikiActivitiesTool } from "./tools/get-user-wiki-activities.js";
 import { getWikiTool } from "./tools/get-wiki.js";
+import { searchWikiTool } from "./tools/search-wiki.js";
 
 async function main() {
 	console.log("Initializing IQ Wiki MCP Server...");
@@ -17,6 +18,7 @@ async function main() {
 	server.addTool(getUserCreatedWikisTool);
 	server.addTool(getUserEditedWikisTool);
 	server.addTool(getWikiActivitiesTool);
+	server.addTool(searchWikiTool);
 
 	try {
 		await server.start({
