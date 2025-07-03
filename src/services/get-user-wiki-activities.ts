@@ -12,7 +12,6 @@ export class GetUserWikiActivitiesService {
 		timeFrameSeconds?: number,
 	) {
 		try {
-			// biome-ignore lint/suspicious/noExplicitAny: the type UserWikiResponse is not exposing created
 			const response: any = await client.request(USER_ACTIVITIES_QUERY, {
 				id,
 				limit: 50, // Increase limit to get more activities
@@ -32,7 +31,6 @@ export class GetUserWikiActivitiesService {
 			// Filter by activity type if specified
 			if (activityType) {
 				activities = activities.filter(
-					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					(activity: any) => activity.type === activityType,
 				);
 
@@ -49,7 +47,6 @@ export class GetUserWikiActivitiesService {
 				const timeLimit = new Date(now.getTime() - timeFrameSeconds * 1000);
 
 				// Filter activities by datetime
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				activities = activities.filter((activity: any) => {
 					if (!activity.datetime) return false;
 					const activityDate = new Date(activity.datetime);
@@ -74,24 +71,20 @@ export class GetUserWikiActivitiesService {
 			// Fetch additional metadata for edited wikis if needed
 			if (
 				activityType === "UPDATED" ||
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				(!activityType && activities.some((a: any) => a.type === "UPDATED"))
 			) {
 				await this.enrichWithWikiMetadata(
-					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					activities.filter((a: any) => a.type === "UPDATED"),
 				);
 			}
 
 			return activities;
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		} catch (error: any) {
 			throw new Error(error.message);
 		}
 	}
 
 	// Fetch additional metadata for edited wikis
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	private async enrichWithWikiMetadata(activities: any) {
 		for (const activity of activities) {
 			if (!activity.content?.[0]) continue;
@@ -99,7 +92,6 @@ export class GetUserWikiActivitiesService {
 			try {
 				// Get the full wiki details to access metadata
 				const wikiId = activity.content[0].id;
-				// biome-ignore lint/suspicious/noExplicitAny: GraphQL response type
 				const wikiResponse: any = await client.request(WIKI_QUERY, {
 					id: wikiId,
 				});
@@ -136,17 +128,14 @@ export class GetUserWikiActivitiesService {
 		}
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	formatCreated(activities: any) {
-		return (
-			activities
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				.map((activity: any) => {
-					const wiki = activity.content[0];
-					const date = new Date(activity.datetime);
-					const formattedDate = date.toLocaleString();
+		return activities
+			.map((activity: any) => {
+				const wiki = activity.content[0];
+				const date = new Date(activity.datetime);
+				const formattedDate = date.toLocaleString();
 
-					return dedent`
+				return dedent`
 						📜 Created Wiki Details
 						- Title: ${wiki.title}
 						- Summary: ${wiki.summary}
@@ -155,42 +144,38 @@ export class GetUserWikiActivitiesService {
 						🔗 Source: ${IQ_BASE_URL}/${wiki.id}
 						🔗 Transaction: https://polygonscan.com/tx/${wiki.transactionHash}
 					`;
-				})
-				.join("\n\n")
-		);
+			})
+			.join("\n\n");
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	formatEdited(activities: any) {
-		return (
-			activities
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				.map((activity: any) => {
-					const wiki = activity.content[0];
-					const date = new Date(activity.datetime);
-					const formattedDate = date.toLocaleString();
+		return activities
+			.map((activity: any) => {
+				const wiki = activity.content[0];
+				const date = new Date(activity.datetime);
+				const formattedDate = date.toLocaleString();
 
-					// Check if we have enriched metadata
-					let editDetails = "";
-					if (activity.enrichedMetadata) {
-						if (
-							activity.enrichedMetadata.wordsChanged !== "Unknown" &&
-							activity.enrichedMetadata.percentChanged !== "Unknown"
-						) {
-							editDetails += `- Changes: ${activity.enrichedMetadata.wordsChanged} words (${activity.enrichedMetadata.percentChanged}%)\n`;
-						}
-
-						if (activity.enrichedMetadata.blocksChanged !== "Unknown") {
-							editDetails += `- Modified sections: ${activity.enrichedMetadata.blocksChanged}\n`;
-						}
+				// Check if we have enriched metadata
+				let editDetails = "";
+				if (activity.enrichedMetadata) {
+					if (
+						activity.enrichedMetadata.wordsChanged !== "Unknown" &&
+						activity.enrichedMetadata.percentChanged !== "Unknown"
+					) {
+						editDetails += `- Changes: ${activity.enrichedMetadata.wordsChanged} words (${activity.enrichedMetadata.percentChanged}%)\n`;
 					}
 
-					// If we couldn't get metadata, use a simpler format
-					if (!editDetails) {
-						editDetails = "- Edit details not available\n";
+					if (activity.enrichedMetadata.blocksChanged !== "Unknown") {
+						editDetails += `- Modified sections: ${activity.enrichedMetadata.blocksChanged}\n`;
 					}
+				}
 
-					return dedent`
+				// If we couldn't get metadata, use a simpler format
+				if (!editDetails) {
+					editDetails = "- Edit details not available\n";
+				}
+
+				return dedent`
 						📜 Edited Wiki Details
 						- Title: ${wiki.title}
 						- Summary: ${wiki.summary}
@@ -199,44 +184,40 @@ export class GetUserWikiActivitiesService {
 						🔗 Source: ${IQ_REVISION_URL}/${activity.id}
 						🔗 Transaction: https://polygonscan.com/tx/${wiki.transactionHash}
 					`;
-				})
-				.join("\n\n")
-		);
+			})
+			.join("\n\n");
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	format(activities: any) {
-		return (
-			activities
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				.map((activity: any) => {
-					const wiki = activity.content[0];
-					const date = new Date(activity.datetime);
-					const formattedDate = date.toLocaleString();
-					const actionType = activity.type === "CREATED" ? "Created" : "Edited";
+		return activities
+			.map((activity: any) => {
+				const wiki = activity.content[0];
+				const date = new Date(activity.datetime);
+				const formattedDate = date.toLocaleString();
+				const actionType = activity.type === "CREATED" ? "Created" : "Edited";
 
-					// Add edit details for edited wikis
-					let editDetails = "";
-					if (activity.type === "UPDATED" && activity.enrichedMetadata) {
-						if (
-							activity.enrichedMetadata.wordsChanged !== "Unknown" &&
-							activity.enrichedMetadata.percentChanged !== "Unknown"
-						) {
-							editDetails += `- Changes: ${activity.enrichedMetadata.wordsChanged} words (${activity.enrichedMetadata.percentChanged}%)\n`;
-						}
-
-						if (activity.enrichedMetadata.blocksChanged !== "Unknown") {
-							editDetails += `- Modified sections: ${activity.enrichedMetadata.blocksChanged}\n`;
-						}
+				// Add edit details for edited wikis
+				let editDetails = "";
+				if (activity.type === "UPDATED" && activity.enrichedMetadata) {
+					if (
+						activity.enrichedMetadata.wordsChanged !== "Unknown" &&
+						activity.enrichedMetadata.percentChanged !== "Unknown"
+					) {
+						editDetails += `- Changes: ${activity.enrichedMetadata.wordsChanged} words (${activity.enrichedMetadata.percentChanged}%)\n`;
 					}
 
-					// Determine source URL based on activity type
-					const sourceUrl =
-						activity.type === "UPDATED"
-							? `${IQ_REVISION_URL}/${activity.id}`
-							: `${IQ_BASE_URL}/${wiki.id}`;
+					if (activity.enrichedMetadata.blocksChanged !== "Unknown") {
+						editDetails += `- Modified sections: ${activity.enrichedMetadata.blocksChanged}\n`;
+					}
+				}
 
-					return dedent`
+				// Determine source URL based on activity type
+				const sourceUrl =
+					activity.type === "UPDATED"
+						? `${IQ_REVISION_URL}/${activity.id}`
+						: `${IQ_BASE_URL}/${wiki.id}`;
+
+				return dedent`
 						📜 Wiki ${actionType}
 						- Title: ${wiki.title}
 						- Summary: ${wiki.summary}
@@ -245,8 +226,7 @@ export class GetUserWikiActivitiesService {
 						🔗 Source: ${sourceUrl}
 						🔗 Transaction: https://polygonscan.com/tx/${wiki.transactionHash}
 					`;
-				})
-				.join("\n\n")
-		);
+			})
+			.join("\n\n");
 	}
 }

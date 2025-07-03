@@ -12,6 +12,7 @@
 		"resolveJsonModule": true,
 		"sourceMap": true,
 		"declaration": true,
+		"noImplicitAny": false,
 		"types": ["node"],
 		"plugins": [
 			{
