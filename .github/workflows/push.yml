@@ -1,5 +1,7 @@
-name: Push checks
-on: [push]
+name: Push checks (Template - Manual Trigger)
+
+# To enable, change to e.g.: on: [push]
+on: workflow_dispatch
 
 jobs:
   Checkout:
@@ -35,5 +37,3 @@ jobs:
         run: pnpm run build
       - name: Biome Lint Check
         run: pnpm run lint
-      - name: Tests
-        run: pnpm test

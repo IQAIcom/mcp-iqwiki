@@ -1,217 +1,138 @@
-# MCP-IQWiki: Model Context Protocol Server for IQ.wiki
+# 📚 IQ Wiki MCP Server
 
-This project implements a Model Context Protocol (MCP) server to interact with IQ.wiki data. It allows MCP-compatible clients (like AI assistants, IDE extensions, or custom applications) to access wiki information such as specific wikis by ID, user-created wikis, user-edited wikis, and detailed wiki activities.
+[![npm version](https://img.shields.io/npm/v/@iqai/mcp-iqwiki.svg)](https://www.npmjs.com/package/@iqai/mcp-iqwiki)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Features (MCP Tools)
+## 📖 Overview
 
-The server exposes the following tools that MCP clients can utilize:
+The IQ Wiki MCP Server enables AI agents to interact with [IQ.wiki](https://iq.wiki), a blockchain-powered encyclopedia for crypto and DeFi knowledge. This server provides comprehensive access to wiki data, user contributions, and activity tracking.
 
-- **`GET_WIKI`**: Get details about a specific wiki from the IQ.wiki platform.
+By implementing the Model Context Protocol (MCP), this server allows Large Language Models (LLMs) to discover wiki articles, search for knowledge, and track user wiki activities directly through their context window, bridging the gap between AI and decentralized knowledge.
 
-  - Parameters: `id` (string) - The ID of the wiki to retrieve.
+## ✨ Features
 
-- **`GET_USER_CREATED_WIKIS`**: List wikis created by a specific user on IQ.wiki.
+*   **Wiki Access**: Retrieve detailed information about any wiki article on IQ.wiki by ID.
+*   **User Contributions**: Track wikis created or edited by specific users based on their Ethereum address.
+*   **Activity Tracking**: Monitor detailed wiki activities (creations and edits) with optional time filtering.
+*   **Search**: Search for wiki articles using natural language queries.
 
-  - Parameters: `id` (string) - The Ethereum address of the user.
-  - Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
+## 📦 Installation
 
-- **`GET_USER_EDITED_WIKIS`**: List wikis edited by a specific user on IQ.wiki.
+### 🚀 Using npx (Recommended)
 
-  - Parameters: `id` (string) - The Ethereum address of the user.
-  - Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
+To use this server without installing it globally:
 
-- **`GET_USER_WIKI_ACTIVITIES`**: Get detailed wiki activities (creations or edits) for a user on IQ.wiki.
-  - Parameters: `id` (string) - The Ethereum address of the user.
-  - Parameters: `activityType` (enum: "CREATED" | "UPDATED", optional) - Type of activity to filter by.
-  - Parameters: `timeFrameSeconds` (number, optional) - Time frame in seconds to filter results.
+```bash
+npx @iqai/mcp-iqwiki
+```
 
-## Prerequisites
-
-- Node.js (v16 or newer recommended)
-- pnpm (See <https://pnpm.io/installation>)
-
-## Installation
-
-There are a few ways to use `mcp-iqwiki`:
-
-**1. Using `pnpm dlx` (Recommended for most MCP client setups):**
-
-You can run the server directly using `pnpm dlx` without needing a global installation. This is often the easiest way to integrate with MCP clients.
+### 📦 Using pnpm dlx
 
 ```bash
 pnpm dlx @iqai/mcp-iqwiki
 ```
 
-**2. Global Installation from npm (via pnpm):**
-
-Install the package globally to make the `mcp-iqwiki` command available system-wide:
+### 🔧 Build from Source
 
 ```bash
-pnpm add -g @iqai/mcp-iqwiki
+git clone https://github.com/IQAIcom/mcp-iqwiki.git
+cd mcp-iqwiki
+pnpm install
+pnpm run build
 ```
 
-**3. Building from Source (for development or custom modifications):**
+## ⚡ Running with an MCP Client
 
-1.  **Clone the repository:**
+Add the following configuration to your MCP client settings (e.g., `claude_desktop_config.json`).
 
-    ```bash
-    git clone https://github.com/IQAIcom/mcp-iqwiki.git
-    cd mcp-iqwiki
-    ```
-
-2.  **Install dependencies:**
-
-    ```bash
-    pnpm install
-    ```
-
-3.  **Build the server:**
-    This compiles the TypeScript code to JavaScript in the `dist` directory.
-
-    ```bash
-    pnpm run build
-    ```
-
-## Running the Server with an MCP Client
-
-MCP clients (like AI assistants, IDE extensions, etc.) will run this server as a background process. You need to configure the client to tell it how to start your server.
-
-Below is an example configuration snippet that an MCP client might use (e.g., in a `mcp_servers.json` or similar configuration file):
+### 📋 Minimal Configuration
 
 ```json
 {
   "mcpServers": {
-    "iq-wiki-mcp-server": {
-      "command": "pnpm",
-      "args": ["dlx", "@iqai/mcp-iqwiki"]
+    "iq-wiki": {
+      "command": "npx",
+      "args": ["-y", "@iqai/mcp-iqwiki"]
     }
   }
 }
 ```
 
-**Alternative if Globally Installed:**
-
-If you have installed `mcp-iqwiki` globally, you can simplify the command:
+### ⚙️ Advanced Configuration (Local Build)
 
 ```json
 {
   "mcpServers": {
-    "iq-wiki-mcp-server": {
-      "command": "mcp-iqwiki",
-      "args": []
+    "iq-wiki": {
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-iqwiki/dist/index.js"]
     }
   }
 }
 ```
 
-## Tool Examples
+## 💡 Usage Examples
 
-Below are examples of how to use each tool in this MCP server:
+### 🔍 Wiki Discovery
+*   "Get the wiki article for Bitcoin"
+*   "Search for wikis about DeFi protocols"
+*   "Find information about Ethereum"
 
-### GET_WIKI
+### 👤 User Contributions
+*   "What wikis has 0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889 created?"
+*   "Show wikis edited by this user in the last 24 hours"
+*   "Get all wiki activities for this Ethereum address"
 
-```json
-{
-  "id": "bitcoin"
-}
+### 📊 Activity Tracking
+*   "List recent wiki creations by user 0x..."
+*   "Show wiki edits in the last hour"
+*   "Track user wiki contributions over time"
+
+## 🛠️ MCP Tools
+
+<!-- AUTO-GENERATED TOOLS START -->
+
+<!-- AUTO-GENERATED TOOLS END -->
+
+## 👨‍💻 Development
+
+### 🏗️ Build Project
+```bash
+pnpm run build
 ```
 
-Response:
-
-```
-📜 Wiki Details
-- Title: Bitcoin
-- Summary: Bitcoin is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer bitcoin network without the need for intermediaries.
-
-🔗 Source: https://iq.wiki/wiki/bitcoin
-🔗 Transaction: https://polygonscan.com/tx/0x...
+### 👁️ Development Mode (Watch)
+```bash
+pnpm run watch
 ```
 
-Error Response:
-
-```
-Error retrieving wiki: Wiki Not found
-```
-
-### GET_USER_CREATED_WIKIS
-
-```json
-{
-  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889",
-  "timeFrameSeconds": 3600
-}
+### ✅ Linting & Formatting
+```bash
+pnpm run lint
+pnpm run format
 ```
 
-Response:
-
-```
-📜 Wiki Created
-- Title: Ethereum
-- Summary: Ethereum is a decentralized, open-source blockchain with smart contract functionality. Ether is the native cryptocurrency of the platform.
-- Created: 1/1/2024, 12:00:00 AM
-
-🔗 Source: https://iq.wiki/wiki/ethereum
-🔗 Transaction: https://polygonscan.com/tx/0x...
+### 🧪 Testing
+```bash
+pnpm test
 ```
 
-Error Response:
+### 📁 Project Structure
+*   `src/tools/`: Individual tool definitions
+*   `src/services/`: API client and business logic
+*   `src/lib/`: Shared utilities
+*   `src/index.ts`: Server entry point
 
-```
-Error retrieving user created wikis: user does not exist
-```
+## 📚 Resources
 
-### GET_USER_EDITED_WIKIS
+*   [IQ.wiki Platform](https://iq.wiki)
+*   [Model Context Protocol (MCP)](https://modelcontextprotocol.io)
+*   [IQ.wiki Documentation](https://learn.iq.wiki)
 
-```json
-{
-  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889"
-}
-```
+## ⚠️ Disclaimer
 
-Response:
+This tool interacts with IQ.wiki blockchain data. Users should verify all information independently. Wiki content is community-contributed and may change over time.
 
-```
-📜 Wiki Edited
-- Title: Ethereum
-- Summary: Ethereum is a decentralized, open-source blockchain with smart contract functionality. Ether is the native cryptocurrency of the platform.
-- Edited: 1/2/2024, 12:00:00 AM
-- Changes: 10 words (5%)
-- Modified sections: 2
+## 📄 License
 
-🔗 Source: https://revision.iq.wiki/ipfs/...
-🔗 Transaction: https://polygonscan.com/tx/0x...
-```
-
-Error Response:
-
-```
-Error retrieving user edited wikis: user does not exist
-```
-
-### GET_USER_WIKI_ACTIVITIES
-
-```json
-{
-  "id": "0x8AF7a19a26d8FBC48dEfB35AEfb15Ec8c407f889",
-  "activityType": "CREATED",
-  "timeFrameSeconds": 86400
-}
-```
-
-Response:
-
-```
-📜 Created Wiki Details
-- Title: Bitcoin
-- Summary: Bitcoin is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer bitcoin network without the need for intermediaries.
-- Created: 1/1/2024, 12:00:00 AM
-
-🔗 Source: https://iq.wiki/wiki/bitcoin
-🔗 Transaction: https://polygonscan.com/tx/0x...
-```
-
-Error Response:
-
-```
-Error retrieving user wiki activities: User has no wiki activities
-```
+[MIT](LICENSE)
