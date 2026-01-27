@@ -71,6 +71,14 @@ Add the following configuration to your MCP client settings (e.g., `claude_deskt
 }
 ```
 
+## 🔐 Configuration (Environment Variables)
+
+| Variable | Required | Description | Default |
+| :--- | :--- | :--- | :--- |
+| - | - | No environment variables required | - |
+
+This MCP server does not require any environment variables. It connects to the public IQ.wiki API.
+
 ## 💡 Usage Examples
 
 ### 🔍 Wiki Discovery
