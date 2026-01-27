@@ -92,6 +92,45 @@ Add the following configuration to your MCP client settings (e.g., `claude_deskt
 
 <!-- AUTO-GENERATED TOOLS START -->
 
+### `GET_USER_CREATED_WIKIS`
+Get wikis created by a specific user on IQ.wiki
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | ✅ | The Ethereum address of the user |
+| `timeFrameSeconds` | number |  | Optional time frame in seconds to filter results |
+
+### `GET_USER_EDITED_WIKIS`
+Get wikis edited by a specific user on IQ.wiki
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | ✅ | The Ethereum address of the user |
+| `timeFrameSeconds` | number |  | Optional time frame in seconds to filter results |
+
+### `GET_USER_WIKI_ACTIVITIES`
+Get wiki activities (creations or edits) for a specific user on IQ.wiki
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | ✅ | The Ethereum address of the user |
+| `activityType` | string |  | Type of activity: CREATED or UPDATED |
+| `timeFrameSeconds` | number |  | Optional time frame in seconds to filter results |
+
+### `GET_WIKI`
+Get details about a specific wiki from IQ.wiki by ID
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | ✅ | The ID of the wiki to retrieve |
+
+### `SEARCH_WIKI`
+Search for a wiki from IQ.wiki by query
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `query` | string | ✅ | The query to search for |
+
 <!-- AUTO-GENERATED TOOLS END -->
 
 ## 👨‍💻 Development
