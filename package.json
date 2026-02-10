@@ -34,7 +34,7 @@
 	"keywords": ["mcp", "iqwiki", "iq.wiki", "iqai"],
 	"dependencies": {
 		"dedent": "^1.6.0",
-		"fastmcp": "^1.27.7",
+		"fastmcp": "^3.32.0",
 		"gql.tada": "^1.4.3",
 		"graphql": "^16.8.1",
 		"graphql-request": "^6.1.0",
