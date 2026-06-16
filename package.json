@@ -21,12 +21,12 @@
 	"author": "IQAI",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/IQAIcom/mcp-iqwiki.git"
+		"url": "https://github.com/IQOfficial/mcp-iqwiki.git"
 	},
 	"license": "ISC",
-	"homepage": "https://github.com/IQAIcom/mcp-iqwiki",
+	"homepage": "https://github.com/IQOfficial/mcp-iqwiki",
 	"bugs": {
-		"url": "https://github.com/IQAIcom/mcp-iqwiki/issues"
+		"url": "https://github.com/IQOfficial/mcp-iqwiki/issues"
 	},
 	"publishConfig": {
 		"access": "public"

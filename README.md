@@ -35,7 +35,7 @@ pnpm dlx @iqai/mcp-iqwiki
 ### 🔧 Build from Source
 
 ```bash
-git clone https://github.com/IQAIcom/mcp-iqwiki.git
+git clone https://github.com/IQOfficial/mcp-iqwiki.git
 cd mcp-iqwiki
 pnpm install
 pnpm run build
